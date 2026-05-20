@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Virtual Card Maker. Issue virtual Visa cards in 60 seconds.</title>
+<meta name="description" content="Issue virtual Visa cards for payroll, vendors, subscriptions, and team expenses. Set spend limits, lock merchants, and track every transaction from one dashboard." />
+<meta name="google-site-verification" content="fLqF7Zcdxk2ZRZaVAarJKv1bZun5I27BjCkMNfFPQQI" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BGXBHG17B0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BGXBHG17B0');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold:        #20319D; /* Deep Royal Blue - primary brand accent */
+    --gold-dark:   #161F66; /* darker royal blue for hover */
+    --gold-bright: #3BF493; /* Neon Green - live indicators */
+    --gold-deep:   #0E165C; /* deepest royal blue text */
+    --gold-tint:   #E8EBFF; /* light blue bg */
+    --gold-tint-2: #C5CBFF; /* light blue border */
+    --card-1:      #EDC85B; /* Gold - card top */
+    --card-2:      #C39320; /* Gold - card bottom */
+    --black:       #0A0A0A;
+    --ink-1:       #1A1A1A;
+    --ink-2:       #4A4A4A;
+    --ink-3:       #7A7A7A;
+    --ink-4:       #B5B5B5;
+    --white:       #FFFFFF;
+    --bg:          #FAFAFA;  /* main whiteish background */
+    --off-white:   #F0F0F0;  /* lightish gray for alt sections */
+    --line:        #E5E5E5;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px; line-height: 1.55;
+    background: var(--bg); color: var(--ink-1);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  ::selection { background: var(--gold); color: var(--black); }
+
+  .wrap { width: 90%; max-width: 1500px; margin: 0 auto; }
+  .wrap-narrow { width: 90%; max-width: 1100px; margin: 0 auto; }
+
+  /* HIGHLIGHT */
+  .hl-line {
+    position: relative; color: var(--black); font-weight: 700; display: inline-block;
+  }
+  .hl-line::after {
+    content: ''; position: absolute; left: -2%; right: -2%; bottom: 0.05em;
+    height: 0.38em; background: var(--gold); opacity: 0.5; z-index: -1;
+  }
+
+  /* ANIMATIONS */
+  @keyframes blink { 50% { opacity: 0.3; } }
+  @keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--black); color: var(--white);
+    font-size: 13px; padding: 10px 0; text-align: center;
+    font-weight: 500; letter-spacing: 0.1px;
+  }
+  .topbar .dot {
+    display: inline-block; width: 7px; height: 7px;
+    border-radius: 50%; background: var(--gold-bright);
+    margin-right: 8px; vertical-align: middle; animation: blink 1.6s infinite;
+  }
+  .topbar b { color: var(--gold-bright); font-weight: 700; }
+
+  /* NAV */
+  nav.nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250, 250, 250, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    width: 90%; max-width: 1500px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 0;
+  }
+  .logo {
+    display: inline-flex; align-items: center; gap: 14px;
+    text-decoration: none; color: var(--black);
+  }
+  .logo-svg { height: 30px; width: auto; display: block; }
+  .logo-divider { width: 1px; height: 22px; background: var(--line); }
+  .logo-product {
+    font-weight: 700; color: var(--black);
+    font-size: 15px; letter-spacing: -0.3px;
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    color: var(--ink-1); text-decoration: none;
+    font-size: 14.5px; font-weight: 500; transition: color .15s;
+  }
+  .nav-links a:hover { color: var(--gold-dark); }
+  .nav-cta { display: flex; gap: 12px; align-items: center; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 22px; font-size: 14.5px; font-weight: 700;
+    text-decoration: none; cursor: pointer;
+    font-family: inherit; letter-spacing: -0.2px;
+    transition: all .18s ease;
+    border: 1.5px solid var(--black); background: transparent; color: var(--black);
+    border-radius: 4px;
+  }
+  .btn:hover { background: var(--black); color: var(--white); }
+  .btn-gold {
+    background: var(--black); border-color: var(--black); color: var(--white);
+  }
+  .btn-gold:hover {
+    background: var(--gold); border-color: var(--gold); color: var(--white);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(32, 49, 157, 0.32);
+  }
+  .btn-lg { padding: 15px 28px; font-size: 15px; }
+  .btn-link {
+    background: transparent; border: 0; padding: 0 0 2px 0;
+    color: var(--black); font-weight: 700; font-size: 14.5px;
+    text-decoration: none; cursor: pointer;
+    border-bottom: 2px solid var(--black); font-family: inherit;
+  }
+  .btn-link:hover { color: var(--gold-dark); border-bottom-color: var(--gold); }
+
+  /* HERO */
+  .hero { padding: 80px 0 72px; position: relative; }
+  .hero-grid {
+    display: grid; grid-template-columns: 1.1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+  .hero-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gold-tint); border: 1px solid var(--gold-tint-2);
+    padding: 6px 14px 6px 6px; border-radius: 100px;
+    font-size: 12.5px; color: var(--gold-deep); font-weight: 600;
+    margin-bottom: 28px;
+  }
+  .hero-pill-chip {
+    background: var(--gold); color: var(--white);
+    font-size: 10.5px; padding: 3px 10px; border-radius: 100px;
+    text-transform: uppercase; font-weight: 800; letter-spacing: 0.6px;
+  }
+  .pill-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold-bright);
+    animation: blink 1.6s infinite;
+    display: inline-block;
+    box-shadow: 0 0 0 0 var(--gold-bright);
+  }
+
+  /* H1 rotating word */
+  .rotator {
+    display: inline-block;
+    position: relative;
+    min-width: 11ch;
+    height: 1em;
+    vertical-align: bottom;
+    text-align: left;
+    color: var(--gold);
+  }
+  .rotator-word {
+    position: absolute;
+    top: 0; left: 0;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(0.5em);
+    transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .rotator-word.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .rotator-word.out {
+    opacity: 0;
+    transform: translateY(-0.5em);
+  }
+  h1 {
+    font-size: clamp(38px, 5.5vw, 76px);
+    font-weight: 800; line-height: 0.98;
+    color: var(--black);
+    letter-spacing: -0.04em; margin-bottom: 28px;
+  }
+  .hero-sub {
+    font-size: clamp(16px, 1.4vw, 19px);
+    color: var(--ink-2); margin-bottom: 36px; max-width: 540px;
+    line-height: 1.55;
+  }
+  .hero-ctas {
+    display: flex; gap: 14px; align-items: center;
+    margin-bottom: 32px; flex-wrap: wrap;
+  }
+  .hero-foot {
+    display: flex; gap: 28px; flex-wrap: wrap;
+    font-size: 13px; color: var(--ink-2); font-weight: 500;
+  }
+  .hero-foot span { display: inline-flex; align-items: center; gap: 7px; }
+  .hero-foot .ck {
+    width: 16px; height: 16px; background: var(--gold); border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--white); font-weight: 800; font-size: 10px;
+  }
+
+  /* HERO STAGE */
+  .hero-card-wrap {
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .hero-card-stack {
+    position: relative; width: 100%; max-width: 440px;
+    min-height: 460px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .visa-card {
+    aspect-ratio: 1.6 / 1; width: 100%; padding: 26px;
+    border-radius: 5px; color: var(--white);
+    position: relative; overflow: hidden;
+    background: linear-gradient(140deg, var(--card-1) 0%, var(--card-2) 100%);
+    box-shadow: 0 30px 70px rgba(10, 10, 10, 0.22), 0 10px 20px rgba(10, 10, 10, 0.08);
+    transition: transform .6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .8s ease;
+  }
+  .visa-card::before {
+    content: ''; position: absolute; top: -120px; right: -120px;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.13);
+  }
+  .visa-card::after {
+    content: ''; position: absolute; bottom: -80px; left: -80px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .vc-row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; position: relative; z-index: 1; }
+  .vc-brand { font-size: 13px; font-weight: 800; letter-spacing: 0.3px; }
+  .vc-chip { width: 42px; height: 30px; background: rgba(255, 255, 255, 0.42); border-radius: 3px; position: relative; }
+  .vc-chip::after { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 3px; }
+  .vc-name { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; position: relative; z-index: 1; }
+  .vc-num { font-size: 15px; letter-spacing: 3px; opacity: 0.9; position: relative; z-index: 1; font-weight: 500; }
+  .vc-row3 { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 18px; position: relative; z-index: 1; }
+  .vc-label { font-size: 9.5px; opacity: 0.85; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; }
+  .vc-value { font-size: 14px; font-weight: 700; margin-top: 3px; }
+  .vc-logo { font-weight: 800; font-style: italic; font-size: 24px; letter-spacing: -0.8px; }
+
+  /* SMALL CARD (footer + reuse) */
+  .visa-card.small { padding: 18px; }
+  .visa-card.small .vc-row1 { margin-bottom: 26px; }
+  .visa-card.small .vc-name { font-size: 13px; }
+  .visa-card.small .vc-num { font-size: 12px; letter-spacing: 2px; }
+  .visa-card.small .vc-logo { font-size: 18px; }
+  .visa-card.small .vc-chip { width: 32px; height: 24px; }
+  .visa-card.small .vc-value { font-size: 11px; }
+  .visa-card.small .vc-label { font-size: 8px; }
+
+  /* CREATE FORM (hero animation) */
+  .create-form {
+    position: absolute; top: 0; left: -18%;
+    width: 240px; background: var(--white);
+    border: 1.5px solid var(--black); border-radius: 4px;
+    padding: 16px; box-shadow: 0 18px 36px rgba(10, 10, 10, 0.12);
+    z-index: 4; transform: translateY(-8px) scale(0.95); opacity: 0;
+    transition: opacity .35s ease, transform .35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+  .create-form.show { opacity: 1; transform: translateY(0) scale(1); }
+  .create-form-head {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 800; color: var(--gold-dark);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--line); margin-bottom: 14px;
+  }
+  .create-form-head::before {
+    content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--gold);
+  }
+  .create-form-row { margin-bottom: 12px; }
+  .create-form-row label {
+    display: block; font-size: 10px; color: var(--ink-3);
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+    margin-bottom: 5px;
+  }
+  .create-form-input {
+    background: var(--off-white); border: 1px solid var(--line);
+    border-radius: 3px; padding: 8px 10px;
+    font-size: 13px; font-weight: 600; color: var(--black);
+    min-height: 34px; display: flex; align-items: center;
+    font-family: inherit;
+  }
+  .create-form-input .cursor {
+    display: inline-block; width: 2px; height: 14px;
+    background: var(--gold-dark); margin-left: 2px;
+    animation: blink 1s infinite;
+  }
+  .create-form-btn {
+    width: 100%; background: var(--gold); color: var(--white);
+    border: 0; padding: 9px 12px; border-radius: 3px;
+    font-weight: 800; font-size: 12.5px; font-family: inherit;
+    letter-spacing: -0.1px; cursor: pointer; margin-top: 4px;
+    transition: all .18s ease; display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .create-form-btn.clicked {
+    background: var(--gold-dark); color: var(--white); transform: scale(0.96);
+    box-shadow: 0 0 0 4px rgba(32, 49, 157, 0.3);
+  }
+
+  /* Permissions row in create form */
+  .create-perms { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
+  .perm {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 9px; background: var(--off-white);
+    border: 1px solid var(--line); border-radius: 100px;
+    font-size: 10.5px; font-weight: 700; color: var(--ink-3);
+    transition: all .35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    letter-spacing: -0.1px;
+  }
+  .perm svg { width: 11px; height: 11px; flex-shrink: 0; }
+  .perm.on {
+    background: var(--gold-tint); border-color: var(--gold);
+    color: var(--gold-deep); transform: scale(1.05);
+  }
+  .perm.on svg { color: var(--gold-dark); }
+
+  /* CARD TOAST */
+  .card-toast {
+    position: absolute; top: 6%; right: -10%;
+    background: var(--white); border: 1px solid var(--line);
+    padding: 12px 16px; border-radius: 4px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 18px 38px rgba(10, 10, 10, 0.12);
+    opacity: 0; transform: translateY(-8px) scale(0.94);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 5; min-width: 220px; pointer-events: none;
+  }
+  .card-toast.show { opacity: 1; transform: translateY(0) scale(1); }
+  .card-toast-icon {
+    width: 34px; height: 34px; border-radius: 4px;
+    background: var(--gold); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-toast-icon svg { width: 17px; height: 17px; }
+  .card-toast-text strong { display: block; font-size: 13px; color: var(--black); font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
+  .card-toast-text span { font-size: 12px; color: var(--ink-2); font-weight: 500; }
+
+  /* Card pulse */
+  .visa-card.pulse {
+    box-shadow:
+      0 30px 70px rgba(10, 10, 10, 0.22),
+      0 10px 20px rgba(10, 10, 10, 0.08),
+      0 0 0 8px rgba(32, 49, 157, 0.3) !important;
+  }
+
+  /* Fade text */
+  .fade-el { transition: opacity 0.35s ease, transform 0.35s ease; display: inline-block; }
+  .fade-el.fading { opacity: 0; transform: translateY(-6px); }
+
+  .card-bottom-tag {
+    position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
+    background: var(--white); border: 1px solid var(--line);
+    padding: 10px 18px; border-radius: 100px;
+    font-size: 13px; font-weight: 700; color: var(--black);
+    box-shadow: 0 12px 32px rgba(10, 10, 10, 0.14);
+    display: flex; align-items: center; gap: 8px;
+    animation: floatY 4s ease-in-out infinite;
+    z-index: 3;
+  }
+  .card-bottom-tag .gd { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: blink 1.6s infinite; }
+
+  /* SECTIONS */
+  section { padding: 100px 0; }
+  .section-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 12.5px; font-weight: 700; color: var(--gold-dark);
+    text-transform: uppercase; letter-spacing: 1.6px; margin-bottom: 18px;
+  }
+  .section-eyebrow::before {
+    content: ''; width: 24px; height: 2px; background: var(--gold);
+  }
+  h2 {
+    font-size: clamp(30px, 4vw, 54px);
+    font-weight: 800; color: var(--black);
+    line-height: 1.04; letter-spacing: -0.035em;
+    margin-bottom: 18px;
+  }
+  .section-lead {
+    font-size: clamp(16px, 1.4vw, 19px); color: var(--ink-2);
+    max-width: 640px; line-height: 1.55;
+  }
+
+  /* WHY */
+  .why-section { padding: 110px 0; }
+  .why-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    margin-top: 56px;
+  }
+  .why {
+    padding: 30px; border: 1px solid var(--line); border-radius: 4px;
+    background: var(--off-white); transition: all .25s ease;
+  }
+  .why:hover { background: var(--white); border-color: var(--black); transform: translateY(-3px); box-shadow: 0 14px 36px rgba(10, 10, 10, 0.06); }
+  .why-icon {
+    width: 44px; height: 44px; border-radius: 4px;
+    background: var(--gold); color: var(--white);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 22px;
+  }
+  .why-icon svg { width: 22px; height: 22px; }
+  .why h3 {
+    font-size: 19px; color: var(--black); font-weight: 700;
+    margin-bottom: 10px; letter-spacing: -0.02em;
+  }
+  .why p { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; }
+
+  /* FEATURES */
+  .features { display: flex; flex-direction: column; gap: 110px; margin-top: 64px; }
+  .feature {
+    display: grid; grid-template-columns: 1fr 1.1fr; gap: 72px;
+    align-items: center;
+  }
+  .feature.reverse { grid-template-columns: 1.1fr 1fr; direction: rtl; }
+  .feature.reverse > * { direction: ltr; }
+  .feature h3 {
+    font-size: clamp(28px, 3.4vw, 40px);
+    font-weight: 800; color: var(--black);
+    line-height: 1.05; letter-spacing: -0.035em; margin-bottom: 18px;
+  }
+  .feature p {
+    font-size: 16.5px; color: var(--ink-2);
+    line-height: 1.55; margin-bottom: 24px; max-width: 460px;
+  }
+  .feature ul { list-style: none; }
+  .feature ul li {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 0; border-top: 1px solid var(--line);
+    font-size: 15px; color: var(--ink-1);
+  }
+  .feature ul li:last-child { border-bottom: 1px solid var(--line); }
+  .feature ul li svg {
+    width: 18px; height: 18px; color: var(--gold-dark); flex-shrink: 0; margin-top: 2px;
+  }
+
+  /* NEW PANEL DESIGN: branded, no mac traffic lights */
+  .panel {
+    background: var(--white); border: 1.5px solid var(--black);
+    border-radius: 5px; overflow: hidden;
+    box-shadow: 12px 12px 0 var(--black);
+  }
+  .panel-stripe {
+    height: 5px;
+    background: linear-gradient(90deg, var(--gold-bright) 0%, var(--gold) 50%, var(--card-2) 100%);
+  }
+  .panel-head {
+    padding: 18px 22px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 12px;
+    background: var(--white);
+  }
+  .panel-head .panel-title {
+    font-size: 15.5px; font-weight: 800; color: var(--black);
+    letter-spacing: -0.02em; flex: 1;
+  }
+  .panel-head .panel-sub {
+    font-size: 12.5px; color: var(--ink-3); font-weight: 600;
+  }
+  .panel-head .panel-pill {
+    background: var(--gold-tint); color: var(--gold-deep);
+    font-size: 10.5px; padding: 4px 10px; border-radius: 100px;
+    font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase;
+  }
+  .panel-head .panel-live {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--gold-deep); font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .panel-head .panel-live::before {
+    content: ''; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--gold); animation: blink 1.6s infinite;
+  }
+  .panel-body { padding: 8px 22px 18px; }
+  .panel-foot {
+    padding: 14px 22px; background: var(--off-white);
+    border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12.5px; color: var(--ink-2); font-weight: 600;
+  }
+  .panel-foot strong { color: var(--black); font-weight: 800; }
+
+  /* RESTRICT (redesigned, no boxed icons) */
+  .rs-list { padding: 4px 0; }
+  .rs {
+    display: grid; grid-template-columns: 24px 1fr auto;
+    gap: 14px; align-items: center;
+    padding: 14px 0; border-bottom: 1px solid var(--line);
+  }
+  .rs:last-child { border-bottom: none; }
+  .rs-icon {
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold-dark);
+  }
+  .rs-icon svg { width: 20px; height: 20px; }
+  .rs-text strong {
+    display: block; font-size: 14.5px; color: var(--black);
+    font-weight: 700; letter-spacing: -0.01em;
+  }
+  .rs-text span {
+    font-size: 13px; color: var(--ink-3); font-weight: 500;
+    margin-top: 2px; display: block;
+  }
+  .rs-toggle {
+    width: 38px; height: 22px; border-radius: 100px;
+    background: var(--gold); position: relative;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  .rs-toggle::after {
+    content: ''; position: absolute; top: 3px; right: 3px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--white); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  /* TRANSACTIONS (redesigned, no card chrome) */
+  .tx-list { padding: 4px 0; }
+  .tx {
+    display: grid; grid-template-columns: 36px 1fr auto;
+    gap: 14px; align-items: center;
+    padding: 14px 0; border-bottom: 1px solid var(--line);
+  }
+  .tx:last-child { border-bottom: none; }
+  .tx-avatar {
+    width: 36px; height: 36px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--white); font-weight: 800; font-size: 13px;
+    background: var(--black); letter-spacing: -0.4px;
+  }
+  .tx-meta strong {
+    display: block; font-size: 14.5px; color: var(--black);
+    font-weight: 700; letter-spacing: -0.01em;
+  }
+  .tx-meta span {
+    font-size: 12.5px; color: var(--ink-3); font-weight: 500;
+    margin-top: 2px; display: block;
+  }
+  .tx-right { text-align: right; }
+  .tx-right .amt {
+    font-size: 14.5px; color: var(--black); font-weight: 800; display: block;
+  }
+  .tx-right .cat {
+    font-size: 10.5px; color: var(--gold-dark); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    background: var(--gold-tint); padding: 2px 8px; border-radius: 100px;
+    display: inline-block; margin-top: 4px;
+  }
+
+  /* BULK UPLOAD (redesigned) */
+  .bulk-file {
+    background: var(--off-white); border: 1px dashed var(--ink-4);
+    border-radius: 4px; padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 14px;
+  }
+  .bulk-file-ico {
+    width: 36px; height: 44px; background: var(--gold);
+    border-radius: 4px; position: relative; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 800; color: var(--white);
+  }
+  .bulk-file-ico::after {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 10px; height: 10px; background: var(--white);
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+  }
+  .bulk-file-meta { flex: 1; }
+  .bulk-file-meta strong { display: block; font-size: 14px; color: var(--black); font-weight: 700; }
+  .bulk-file-meta span { font-size: 12px; color: var(--ink-3); font-weight: 500; }
+  .bulk-progress {
+    margin-bottom: 14px;
+  }
+  .bulk-progress-bar {
+    height: 8px; background: var(--off-white); border-radius: 100px; overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .bulk-progress-fill {
+    height: 100%; width: 98.7%; background: linear-gradient(90deg, var(--gold-bright), var(--gold));
+    border-radius: 100px;
+  }
+  .bulk-progress-text {
+    display: flex; justify-content: space-between;
+    font-size: 11.5px; font-weight: 700; color: var(--ink-2);
+  }
+  .bulk-progress-text strong { color: var(--gold-dark); font-weight: 800; }
+  .bulk-row {
+    display: grid; grid-template-columns: 1.4fr 0.9fr 0.9fr;
+    padding: 11px 0; font-size: 13.5px; color: var(--ink-1); align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+  .bulk-row:last-child { border-bottom: none; }
+  .bulk-row.header {
+    font-size: 11px; color: var(--ink-3); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    padding: 9px 0;
+  }
+  .bulk-row strong { color: var(--black); font-weight: 700; }
+  .bulk-row .check {
+    color: var(--gold-dark); font-weight: 800; font-size: 12px;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+
+  /* CARD TYPES */
+  .ctypes-section { background: var(--off-white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 110px 0; }
+  .ctypes {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+    margin-top: 56px;
+  }
+  .ct {
+    padding: 32px 28px; background: var(--white); border: 1px solid var(--line);
+    border-radius: 4px; transition: all .25s ease; cursor: pointer;
+    display: flex; flex-direction: column;
+  }
+  .ct:hover {
+    border-color: var(--black); transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(10, 10, 10, 0.08);
+  }
+  .ct-icon {
+    width: 48px; height: 48px; border-radius: 4px;
+    background: var(--black); color: var(--gold-bright);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 22px; transition: all .25s ease;
+  }
+  .ct:hover .ct-icon { background: var(--gold); color: var(--white); }
+  .ct-icon svg { width: 22px; height: 22px; }
+  .ct h4 {
+    font-size: 20px; color: var(--black); font-weight: 700;
+    margin-bottom: 10px; letter-spacing: -0.025em;
+  }
+  .ct p { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; }
+
+  /* HOW IT WORKS */
+  .how-section { padding: 110px 0; }
+  .how-grid {
+    display: grid; grid-template-columns: 1.1fr 1.4fr;
+    gap: 80px; align-items: start; margin-top: 56px;
+  }
+  .how-stick { position: sticky; top: 100px; align-self: start; }
+  .how-list { list-style: none; }
+  .how-list li {
+    display: grid; grid-template-columns: 40px 1fr; gap: 24px;
+    padding: 26px 0; border-top: 1px solid var(--line); position: relative;
+  }
+  .how-list li:last-child { border-bottom: 1px solid var(--line); }
+  .how-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--off-white); border: 1.5px solid var(--black);
+    display: flex; align-items: center; justify-content: center; margin-top: 2px;
+  }
+  .how-dot::after {
+    content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--gold);
+  }
+  .how-text h4 {
+    font-size: 19px; color: var(--black); font-weight: 700;
+    margin-bottom: 8px; letter-spacing: -0.02em;
+  }
+  .how-text p { font-size: 15px; color: var(--ink-2); line-height: 1.55; }
+
+  /* USE CASES */
+  .uc-section { background: var(--off-white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 110px 0; }
+  .uc-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+    margin-top: 56px;
+  }
+  .uc {
+    padding: 28px; background: var(--white); border: 1px solid var(--line);
+    border-radius: 4px; transition: all .25s ease;
+  }
+  .uc:hover { border-color: var(--black); transform: translateY(-3px); }
+  .uc h4 {
+    font-size: 18px; color: var(--black); font-weight: 700;
+    margin-bottom: 10px; letter-spacing: -0.02em;
+  }
+  .uc p { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; }
+
+  /* FINAL CTA: aurora */
+  .final {
+    background:
+      radial-gradient(ellipse 55% 38% at 10% 22%, rgba(0, 248, 137, 0.5) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 48% 58%, rgba(45, 145, 230, 0.55) 0%, transparent 62%),
+      radial-gradient(ellipse 50% 60% at 28% 82%, rgba(32, 80, 200, 0.55) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 85% 30%, rgba(15, 28, 90, 0.6) 0%, transparent 55%),
+      linear-gradient(160deg, #03030F 0%, #050B22 50%, #050518 100%);
+    color: var(--white);
+    padding: 130px 0; text-align: center; position: relative; overflow: hidden;
+  }
+  .final h2 {
+    color: var(--white); margin-bottom: 18px; position: relative; z-index: 1;
+    font-size: clamp(32px, 4.5vw, 60px); font-weight: 800;
+  }
+  .final h2 .hl-line { color: var(--gold-bright); }
+  .final h2 .hl-line::after { display: none; }
+  .final p {
+    font-size: clamp(16px, 1.4vw, 19px); color: rgba(255, 255, 255, 0.78);
+    max-width: 560px; margin: 0 auto 36px; position: relative; z-index: 1;
+  }
+  .final-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+  .final .btn { border-color: var(--white); color: var(--white); }
+  .final .btn:hover { background: var(--white); color: var(--black); }
+  .final .btn-gold { background: var(--gold); border-color: var(--gold); color: var(--white); }
+  .final .btn-gold:hover { background: var(--white); border-color: var(--white); color: var(--black); }
+
+  /* FAQ */
+  .faq-section { padding: 110px 0; }
+  .faq {
+    max-width: 880px; margin: 56px auto 0;
+  }
+  .faq-item { border-top: 1px solid var(--line); }
+  .faq-item:last-child { border-bottom: 1px solid var(--line); }
+  .faq-q {
+    padding: 24px 0; display: flex; justify-content: space-between; align-items: center;
+    font-weight: 700; color: var(--black); font-size: clamp(15px, 1.4vw, 18px);
+    cursor: pointer; list-style: none; user-select: none; letter-spacing: -0.02em;
+  }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-icon {
+    width: 30px; height: 30px; border: 1.5px solid var(--black);
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    transition: all .25s ease; flex-shrink: 0;
+    font-weight: 500; font-size: 20px; line-height: 1; color: var(--black);
+    margin-left: 16px;
+  }
+  .faq-item[open] .faq-icon { background: var(--gold); border-color: var(--gold); transform: rotate(45deg); }
+  .faq-a { padding: 0 0 24px; font-size: 15px; color: var(--ink-2); line-height: 1.6; max-width: 720px; }
+
+  /* FOOTER */
+  footer { background: var(--bg); border-top: 1px solid var(--line); padding: 64px 0 32px; }
+  .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 56px; }
+  .footer-brand {
+    display: flex; flex-direction: column; gap: 22px;
+  }
+  .footer-card-display { width: 210px; }
+  .footer-product {
+    font-size: 22px; font-weight: 800; color: var(--black);
+    letter-spacing: -0.5px;
+  }
+  .footer-product small {
+    display: block; font-size: 13px; font-weight: 500;
+    color: var(--ink-3); margin-top: 6px; letter-spacing: 0;
+  }
+  .footer-brand p {
+    font-size: 13.5px; color: var(--ink-2);
+    max-width: 320px; line-height: 1.6;
+  }
+  .footer-zm {
+    margin-top: 4px; display: inline-flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--ink-2); font-weight: 600;
+    text-decoration: none;
+  }
+  .footer-zm svg { height: 26px; width: auto; display: block; }
+  .footer-zm:hover { color: var(--gold-dark); }
+  .footer-grid h5 {
+    font-size: 11.5px; color: var(--ink-3); margin-bottom: 18px;
+    text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;
+  }
+  .footer-grid a {
+    display: block; color: var(--ink-1); font-size: 14px;
+    text-decoration: none; margin-bottom: 10px; transition: color .15s;
+  }
+  .footer-grid a:hover { color: var(--gold-dark); }
+  .footer-disclaimer {
+    margin-top: 8px; padding: 22px 0;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--ink-3); line-height: 1.7;
+    max-width: 980px;
+  }
+  .footer-disclaimer strong { color: var(--ink-2); font-weight: 700; }
+  .footer-bottom {
+    padding-top: 22px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12.5px; color: var(--ink-3); flex-wrap: wrap; gap: 12px;
+  }
+  .footer-bottom a { color: var(--ink-3); text-decoration: none; }
+  .footer-bottom a:hover { color: var(--gold-dark); }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .hero-grid { gap: 56px; }
+    .feature, .feature.reverse { gap: 48px; }
+    .how-grid { gap: 56px; }
+    .create-form { left: -10%; width: 220px; }
+  }
+
+  @media (max-width: 860px) {
+    .nav-links { display: none; }
+    .hero { padding: 56px 0 56px; }
+    .create-form { display: none; }
+    .card-toast { right: 0; top: -4%; }
+    .hero-grid, .feature, .feature.reverse, .how-grid, .footer-grid, .why-grid, .ctypes, .uc-grid {
+      grid-template-columns: 1fr; gap: 48px;
+    }
+    .feature.reverse { direction: ltr; }
+    .feature.reverse > * { direction: ltr; }
+    section { padding: 80px 0; }
+    .why-section, .ctypes-section, .how-section, .uc-section, .final, .faq-section { padding: 80px 0; }
+    .hero-card-stack { max-width: 380px; margin: 0 auto; min-height: 300px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+    .footer-brand { grid-column: 1 / -1; }
+    .how-stick { position: static; }
+    .why-grid, .ctypes, .uc-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  }
+
+  @media (max-width: 600px) {
+    .topbar { font-size: 12px; padding: 9px 12px; }
+    .nav-inner { padding: 14px 0; }
+    .nav-cta .btn-link { display: none; }
+    .logo-svg { height: 26px; }
+    .logo-divider { display: none; }
+    .logo-product { font-size: 13.5px; }
+    h1 { font-size: clamp(32px, 9vw, 44px); }
+    h2 { font-size: 28px; }
+    .feature h3 { font-size: 24px; }
+    .hero-ctas { width: 100%; flex-direction: column; align-items: stretch; }
+    .hero-ctas .btn { width: 100%; justify-content: center; }
+    .hero-ctas .btn-link { align-self: center; }
+    .hero-foot { gap: 12px; flex-direction: column; align-items: flex-start; }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .footer-brand { grid-column: auto; }
+    .final-ctas { width: 100%; flex-direction: column; }
+    .final-ctas .btn { width: 100%; justify-content: center; }
+    .panel { box-shadow: 6px 6px 0 var(--black); }
+    .why-grid, .ctypes, .uc-grid { grid-template-columns: 1fr; }
+    .why, .ct, .uc { padding: 24px; }
+    .visa-card { padding: 20px; }
+    .vc-row1 { margin-bottom: 30px; }
+    .vc-num { letter-spacing: 2px; font-size: 14px; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; }
+    .nav-cta .btn { padding: 10px 14px; font-size: 13px; }
+    .card-toast { top: -8%; right: -2%; min-width: 180px; padding: 10px 12px; }
+    .card-toast-icon { width: 30px; height: 30px; }
+    .card-toast-text strong { font-size: 12px; }
+    .card-toast-text span { font-size: 11px; }
+  }
+
+  @media (max-width: 380px) {
+    .wrap, .wrap-narrow, .nav-inner { width: 92%; }
+    .hero-card-stack { max-width: 280px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="dot"></span> Issue virtual Visa cards in 60 seconds. <a href="https://live.virtualcardmaker.com/auth/signup" style="color: var(--gold-bright); text-decoration: underline; text-underline-offset: 3px; margin-left: 6px; font-weight: 700;">Sign up &rarr;</a>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <svg class="logo-svg" viewBox="0 0 133 39" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Zil Money">
+        <path d="M0 0C1.47298 1.26158 2.16054 1.85323 3.63353 2.90454C10.5776 7.74069 19.3128 10.3177 26.8881 14.5229C30.8862 16.6255 33.103 18.6109 34.1552 23.2366C34.576 24.4982 34.8819 26.3319 34.8819 27.5935C32.3567 23.5985 28.1898 21.288 23.9813 19.6059C18.0894 17.293 11.2847 16.0143 5.81359 13.0706C0.973849 10.5474 0.631281 7.95095 0 2.90454V0Z" fill="#00F889"/>
+        <path d="M34.4605 33.731C34.4605 33.731 34.1646 32.0298 33.7573 31.6229C28.0561 24.9079 9.31373 27.39 4.22325 21.082C2.18704 18.8437 3.02054 16.2008 2.81689 13.352C2.81689 13.352 2.90922 13.6478 3.52007 14.0548C3.92727 14.2582 4.72279 14.554 4.92644 14.7575C10.8313 18.4201 17.6005 19.1395 23.9126 21.7847C29.4103 23.8196 34.4605 27.2196 34.4605 33.731Z" fill="#00F889"/>
+        <path d="M5.71621 25.2979C6.32528 25.7049 6.80456 26.2964 7.81967 26.7034C14.5197 29.7556 28.6872 28.9393 33.763 34.4333C34.9811 35.6542 33.56 34.5416 33.763 36.373C33.763 36.373 33.2855 36.7798 32.6764 36.373C26.7885 33.3207 19.926 34.9515 13.4291 33.7306C10.5867 33.1202 7.83856 32.363 6.4174 29.5142C6.01135 28.9038 5.71621 28.4235 5.71621 27.4061C5.51319 26.5922 5.71621 25.2979 5.71621 25.2979Z" fill="#00F889"/>
+        <path d="M44.5568 10.3915C46.8314 10.3915 48.6831 12.2432 48.6831 14.5177V28.3623C48.6831 30.605 46.8796 32.4416 44.6486 32.4884L43.6845 32.5086V20.0292C43.6845 17.4741 41.6072 15.39 39.0575 15.39H18.665L18.6853 14.4259C18.732 12.1974 20.5662 10.3915 22.7993 10.3915H44.5568Z" fill="#20319D" stroke="white" stroke-width="1.88859"/>
+        <path d="M39.0581 15.9029C41.323 15.9029 43.1723 17.757 43.1723 20.0291V23.2308H13.1743V20.0291C13.1743 17.7545 15.026 15.9029 17.3006 15.9029H39.0581Z" fill="#20319D" stroke="white" stroke-width="1.88859"/>
+        <path d="M43.1723 23.7437V33.8738C43.1723 36.146 41.323 38 39.0581 38H17.3006C15.026 38 13.1743 36.1484 13.1743 33.8738V23.7437H43.1723ZM33.2224 30.7955C33.0773 30.7955 32.9659 30.9072 32.9659 31.052C32.9659 31.1908 33.0835 31.3084 33.2224 31.3084H36.8247C36.9636 31.3084 37.0811 31.1909 37.0811 31.052C37.0811 30.9072 36.9698 30.7955 36.8247 30.7955H33.2224Z" fill="#20319D" stroke="white" stroke-width="1.88859"/>
+        <path d="M64.8332 16L59.2541 2.00909H62.4669L66.5605 12.6836H66.6469L70.6887 2.00909H73.8323L68.2532 16H64.8332ZM75.4449 16V5.63636H78.3122V16H75.4449ZM76.8785 4.61727C76.441 4.61727 76.0667 4.46758 75.7558 4.16818C75.4564 3.85727 75.3067 3.48303 75.3067 3.04545C75.3067 2.60788 75.4564 2.23939 75.7558 1.94C76.0667 1.62909 76.441 1.47364 76.8785 1.47364C77.3161 1.47364 77.6846 1.62909 77.984 1.94C78.2949 2.23939 78.4504 2.60788 78.4504 3.04545C78.4504 3.48303 78.2949 3.85727 77.984 4.16818C77.6846 4.46758 77.3161 4.61727 76.8785 4.61727ZM81.7411 16V8.46909H80.3247V5.63636H83.2265V7.67455H83.952C84.2284 6.94909 84.6659 6.40788 85.2647 6.05091C85.8635 5.69394 86.5371 5.51546 87.2856 5.51546H88.1665V8.00273H87.1647C86.2665 8.00273 85.6044 8.25606 85.1784 8.76273C84.7638 9.26939 84.5565 9.93727 84.5565 10.7664V16H81.7411ZM93.218 16C92.481 16 91.9053 15.8158 91.4907 15.4473C91.0877 15.0673 90.8862 14.4915 90.8862 13.72V7.88182H89.1071V5.63636H90.9207V2.52727H93.7189V5.63636H96.1198V7.88182H93.7534V13.7545H96.3616V16H93.218ZM102.506 16.19C101.066 16.19 99.961 15.81 99.1895 15.05C98.418 14.29 98.0322 13.2536 98.0322 11.9409V5.63636H100.9V11.3882C100.9 12.1367 101.09 12.7009 101.47 13.0809C101.861 13.4494 102.443 13.6336 103.214 13.6336C104.009 13.6336 104.619 13.4321 105.045 13.0291C105.483 12.6261 105.701 12.0503 105.701 11.3018V5.63636H108.569V13.1673H109.985V16H107.083V14.3073H106.358C105.943 14.9176 105.436 15.3839 104.838 15.7064C104.25 16.0288 103.473 16.19 102.506 16.19ZM115.158 16.19C113.937 16.19 112.981 15.8964 112.29 15.3091C111.599 14.7103 111.254 13.9273 111.254 12.96C111.254 11.9352 111.611 11.1464 112.325 10.5936C113.039 10.0409 114.064 9.76455 115.399 9.76455H118.37V9.36727C118.37 8.2503 117.702 7.69182 116.367 7.69182C115.204 7.69182 114.501 8.09485 114.259 8.90091H111.409C111.64 7.76091 112.175 6.89727 113.016 6.31C113.856 5.72273 114.973 5.42909 116.367 5.42909C117.91 5.42909 119.084 5.77455 119.89 6.46545C120.708 7.15636 121.117 8.16394 121.117 9.48818V13.1673H122.464V16H119.562V14.3073H118.837C118.48 14.9061 118.002 15.3724 117.403 15.7064C116.804 16.0288 116.056 16.19 115.158 16.19ZM115.589 14.0136C116.131 14.0136 116.609 13.9158 117.023 13.72C117.438 13.5242 117.766 13.2652 118.008 12.9427C118.249 12.6088 118.37 12.2345 118.37 11.82V11.6645H115.538C114.501 11.6645 113.983 12.0503 113.983 12.8218C113.983 13.2018 114.127 13.4955 114.415 13.7027C114.703 13.91 115.094 14.0136 115.589 14.0136ZM124.474 16V1.49091H127.341V16H124.474ZM66.9405 38.2591C65.5126 38.2591 64.2632 37.9655 63.1923 37.3782C62.1329 36.7794 61.3096 35.9388 60.7223 34.8564C60.1351 33.7624 59.8414 32.49 59.8414 31.0391C59.8414 29.5652 60.1351 28.287 60.7223 27.2045C61.3096 26.1221 62.1329 25.2873 63.1923 24.7C64.2632 24.1012 65.5126 23.8018 66.9405 23.8018C68.092 23.8018 69.1111 24.0033 69.9978 24.4064C70.896 24.7979 71.6272 25.3621 72.1914 26.0991C72.7672 26.8361 73.1299 27.717 73.2796 28.7418H70.2396C70.1129 27.9933 69.756 27.4176 69.1687 27.0145C68.5814 26.6 67.8387 26.3927 66.9405 26.3927C65.6508 26.3927 64.6317 26.8015 63.8832 27.6191C63.1348 28.4367 62.7605 29.5767 62.7605 31.0391C62.7605 32.49 63.1348 33.63 63.8832 34.4591C64.6317 35.2767 65.6508 35.6855 66.9405 35.6855C67.8387 35.6855 68.5814 35.4782 69.1687 35.0636C69.756 34.6491 70.1129 34.0676 70.2396 33.3191H73.2796C73.1299 34.3439 72.7672 35.2306 72.1914 35.9791C71.6272 36.7161 70.896 37.2803 69.9978 37.6718C69.1111 38.0633 68.092 38.2591 66.9405 38.2591ZM78.2177 38.19C76.9971 38.19 76.0413 37.8964 75.3504 37.3091C74.6595 36.7103 74.3141 35.9273 74.3141 34.96C74.3141 33.9352 74.671 33.1464 75.385 32.5936C76.0989 32.0409 77.1238 31.7645 78.4595 31.7645H81.4304V31.3673C81.4304 30.2503 80.7626 29.6918 79.4268 29.6918C78.2638 29.6918 77.5613 30.0948 77.3195 30.9009H74.4695C74.6998 29.7609 75.2353 28.8973 76.0759 28.31C76.9165 27.7227 78.0335 27.4291 79.4268 27.4291C80.9698 27.4291 82.1444 27.7745 82.9504 28.4655C83.768 29.1564 84.1768 30.1639 84.1768 31.4882V35.1673H85.5241V38H82.6223V36.3073H81.8968C81.5398 36.9061 81.062 37.3724 80.4632 37.7064C79.8644 38.0288 79.1159 38.19 78.2177 38.19ZM78.6495 36.0136C79.1907 36.0136 79.6686 35.9158 80.0832 35.72C80.4977 35.5242 80.8259 35.2652 81.0677 34.9427C81.3095 34.6088 81.4304 34.2345 81.4304 33.82V33.6645H78.5977C77.5613 33.6645 77.0432 34.0503 77.0432 34.8218C77.0432 35.2018 77.1871 35.4955 77.475 35.7027C77.7629 35.91 78.1544 36.0136 78.6495 36.0136ZM87.8945 38V30.4691H86.4781V27.6364H89.3799V29.6745H90.1054C90.3818 28.9491 90.8193 28.4079 91.4181 28.0509C92.0169 27.6939 92.6905 27.5155 93.439 27.5155H94.3199V30.0027H93.3181C92.4199 30.0027 91.7578 30.2561 91.3318 30.7627C90.9172 31.2694 90.7099 31.9373 90.7099 32.7664V38H87.8945ZM99.9506 38.2073C98.8912 38.2073 97.9872 37.9827 97.2388 37.5336C96.5018 37.0845 95.9433 36.457 95.5633 35.6509C95.1833 34.8333 94.9933 33.8891 94.9933 32.8182C94.9933 31.7358 95.1776 30.7915 95.546 29.9855C95.9145 29.1679 96.45 28.5403 97.1524 28.1027C97.8663 27.6536 98.7185 27.4291 99.7088 27.4291C100.469 27.4291 101.119 27.573 101.661 27.8609C102.213 28.1373 102.639 28.5345 102.939 29.0527H103.008V23.4909H105.875V35.1673H107.291V38H104.39V36.3073H103.664C103.296 36.9061 102.801 37.3724 102.179 37.7064C101.568 38.0403 100.826 38.2073 99.9506 38.2073ZM100.486 35.72C101.258 35.72 101.868 35.507 102.317 35.0809C102.778 34.6433 103.008 34.0445 103.008 33.2845V32.3518C103.008 31.5918 102.778 30.9988 102.317 30.5727C101.868 30.1352 101.258 29.9164 100.486 29.9164C99.6109 29.9164 98.9545 30.1755 98.5169 30.6936C98.0794 31.2118 97.8606 31.92 97.8606 32.8182C97.8606 33.7164 98.0794 34.4245 98.5169 34.9427C98.9545 35.4609 99.6109 35.72 100.486 35.72ZM113.652 38.2073C112.132 38.2073 110.929 37.8906 110.042 37.2573C109.167 36.6124 108.695 35.7142 108.626 34.5627H111.39C111.482 35.0579 111.718 35.4264 112.098 35.6682C112.489 35.91 113.048 36.0309 113.773 36.0309C114.959 36.0309 115.552 35.7027 115.552 35.0464C115.552 34.7815 115.46 34.5742 115.276 34.4245C115.103 34.2633 114.81 34.1424 114.395 34.0618L112.081 33.6127C110.008 33.2097 108.972 32.2367 108.972 30.6936C108.972 29.7033 109.369 28.9145 110.163 28.3273C110.958 27.7285 112.058 27.4291 113.462 27.4291C114.856 27.4291 115.961 27.7342 116.779 28.3445C117.596 28.9548 118.045 29.807 118.126 30.9009H115.362C115.236 30.4173 115.011 30.0661 114.689 29.8473C114.366 29.6285 113.9 29.5191 113.29 29.5191C112.76 29.5191 112.357 29.5997 112.081 29.7609C111.804 29.9106 111.666 30.1409 111.666 30.4518C111.666 30.6706 111.752 30.8548 111.925 31.0045C112.098 31.1542 112.363 31.2636 112.72 31.3327L115.086 31.7818C116.169 32.0006 116.963 32.3518 117.470 32.8355C117.976 33.3191 118.230 33.9755 118.230 34.8045C118.230 35.8755 117.832 36.7103 117.038 37.3091C116.255 37.9079 115.126 38.2073 113.652 38.2073Z" fill="#20319D"/>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#cards">Card Types</a>
+      <a href="#how">How it works</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <a href="https://live.virtualcardmaker.com/auth/signin" class="btn-link">Sign in</a>
+      <a href="https://live.virtualcardmaker.com/auth/signup" class="btn btn-gold">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="reveal">
+        <h1>Issue virtual cards<br>for <span class="rotator">
+          <span class="rotator-word in">vendors.</span>
+          <span class="rotator-word">payroll.</span>
+          <span class="rotator-word">subscriptions.</span>
+          <span class="rotator-word">contractors.</span>
+          <span class="rotator-word">your team.</span>
+          <span class="rotator-word">gifts.</span>
+        </span></h1>
+        <p class="hero-sub">Set the spend limit, lock the merchant, send it. The cardholder gets a Visa card in 60 seconds. You track every transaction from one dashboard.</p>
+        <div class="hero-ctas">
+          <a href="https://live.virtualcardmaker.com/auth/signup" class="btn btn-gold btn-lg">
+            Create your first card
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#how" class="btn-link">See how it works</a>
+        </div>
+        <div class="hero-foot">
+          <span><span class="ck">✓</span> Issue in 60 seconds</span>
+          <span><span class="ck">✓</span> Apple &amp; Google Wallet</span>
+          <span><span class="ck">✓</span> Bulk via Excel or API</span>
+        </div>
+      </div>
+
+      <div class="hero-card-wrap reveal">
+        <div class="hero-card-stack" id="heroCard">
+
+          <!-- Floating create-card form (typing animation) -->
+          <div class="create-form" id="createForm">
+            <div class="create-form-head">New Card</div>
+            <div class="create-form-row">
+              <label>Cardholder</label>
+              <div class="create-form-input"><span id="formName"></span><span class="cursor" id="cursor1"></span></div>
+            </div>
+            <div class="create-form-row">
+              <label>Limit</label>
+              <div class="create-form-input"><span id="formLimit"></span><span class="cursor" id="cursor2" style="display:none;"></span></div>
+            </div>
+            <div class="create-form-row">
+              <label>Permissions</label>
+              <div class="create-perms">
+                <div class="perm" id="perm1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span id="permText1">US only</span>
+                </div>
+                <div class="perm" id="perm2">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                  <span id="permText2">SaaS only</span>
+                </div>
+                <div class="perm" id="perm3">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span id="permText3">Weekdays</span>
+                </div>
+              </div>
+            </div>
+            <button class="create-form-btn" id="formBtn">
+              Create card
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- Floating sent toast -->
+          <div class="card-toast" id="cardToast">
+            <div class="card-toast-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="card-toast-text">
+              <strong>Card sent</strong>
+              <span id="toastName">to Sarah Chen</span>
+            </div>
+          </div>
+
+          <div class="visa-card" id="visaCard">
+            <div class="vc-row1">
+              <div class="vc-brand">Zil Money</div>
+              <div class="vc-chip"></div>
+            </div>
+            <div class="vc-name fade-el" id="vcName">Sarah Chen</div>
+            <div class="vc-num">4485 •••• •••• <span class="fade-el" id="vcDigits">8204</span></div>
+            <div class="vc-row3">
+              <div>
+                <div class="vc-label" id="vcRole">Marketing Team</div>
+                <div class="vc-value fade-el" id="vcLimit">$5,000 / month</div>
+              </div>
+              <div class="vc-logo">VISA</div>
+            </div>
+          </div>
+
+          <div class="card-bottom-tag">
+            <span class="gd"></span> Authorized in under 2 seconds
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why-section">
+  <div class="wrap">
+    <div style="text-align:center; max-width: 720px; margin: 0 auto;" class="reveal">
+      <div class="section-eyebrow">A new way to spend</div>
+      <h2>Every card on its own leash.</h2>
+      <p class="section-lead" style="margin: 18px auto 0;">A virtual Visa card with rules baked in. Limits, merchants, locations, time windows. You set the rules, we enforce them.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why reveal">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h3>Issue in 60 seconds</h3>
+        <p>Pick a card type, set a limit, send it. Cardholder gets the card by email or pushes it straight to Apple Wallet or Google Wallet.</p>
+      </div>
+      <div class="why reveal">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3>Control every dollar</h3>
+        <p>Set spend caps per transaction, day, month, or year. Lock cards to specific merchants, countries, or time windows.</p>
+      </div>
+      <div class="why reveal">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+        </div>
+        <h3>Track in real time</h3>
+        <p>Live transaction feed. AI categorizes receipts. SMS reminders for missing ones. Export reports straight to your accounting software.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div style="max-width: 720px;" class="reveal">
+      <div class="section-eyebrow">Built for control</div>
+      <h2>Stop overspending before it happens.</h2>
+      <p class="section-lead">Cards your team can actually use. Controls your finance team can actually trust. Reports your accountant will love.</p>
+    </div>
+
+    <div class="features">
+
+      <!-- Feature: Spend Controls -->
+      <div class="feature reveal">
+        <div>
+          <h3>Every rule, on every card.</h3>
+          <p>Set guardrails on each card you issue. Every swipe gets checked against your rules and wallet balance, then approved or declined in under two seconds.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Limits per transaction, day, month, year</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Lock cards to specific merchants or stores</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Restrict by country or city</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Time windows for weekdays or business hours</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="panel-stripe"></div>
+          <div class="panel-head">
+            <div class="panel-title">Card Restrictions</div>
+            <div class="panel-pill">Active</div>
+          </div>
+          <div class="panel-body">
+            <div class="rs-list">
+              <div class="rs">
+                <div class="rs-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div class="rs-text">
+                  <strong>Geographic</strong>
+                  <span>United States only</span>
+                </div>
+                <div class="rs-toggle"></div>
+              </div>
+              <div class="rs">
+                <div class="rs-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                </div>
+                <div class="rs-text">
+                  <strong>Merchants</strong>
+                  <span>Subscriptions only</span>
+                </div>
+                <div class="rs-toggle"></div>
+              </div>
+              <div class="rs">
+                <div class="rs-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="rs-text">
+                  <strong>Time window</strong>
+                  <span>Weekdays, 9 to 6 ET</span>
+                </div>
+                <div class="rs-toggle"></div>
+              </div>
+              <div class="rs">
+                <div class="rs-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="rs-text">
+                  <strong>Amount</strong>
+                  <span>$500 per swipe</span>
+                </div>
+                <div class="rs-toggle"></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-foot">
+            <span>4 of 4 rules active</span>
+            <strong>Save</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature: AI Tracking -->
+      <div class="feature reverse reveal">
+        <div>
+          <h3>Receipts and categories, sorted for you.</h3>
+          <p>Cardholders snap a photo and our AI itemizes the receipt and tags the category. Managers approve in a tap. Missing a receipt? An SMS reminder goes out automatically.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> AI itemization and category tagging</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> SMS reminders for missing receipts</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Proof of delivery with photo and timestamp</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Manager approval workflows and audit trail</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="panel-stripe"></div>
+          <div class="panel-head">
+            <div class="panel-title">Today's Transactions</div>
+            <div class="panel-live">Live</div>
+          </div>
+          <div class="panel-body">
+            <div class="tx-list">
+              <div class="tx">
+                <div class="tx-avatar">V1</div>
+                <div class="tx-meta">
+                  <strong>Vendor One</strong>
+                  <span>Card ending 8204</span>
+                </div>
+                <div class="tx-right">
+                  <span class="amt">$284.00</span>
+                  <span class="cat">SaaS</span>
+                </div>
+              </div>
+              <div class="tx">
+                <div class="tx-avatar">V2</div>
+                <div class="tx-meta">
+                  <strong>Vendor Two</strong>
+                  <span>Card ending 7612</span>
+                </div>
+                <div class="tx-right">
+                  <span class="amt">$42.16</span>
+                  <span class="cat">Travel</span>
+                </div>
+              </div>
+              <div class="tx">
+                <div class="tx-avatar">V3</div>
+                <div class="tx-meta">
+                  <strong>Vendor Three</strong>
+                  <span>Card ending 8204</span>
+                </div>
+                <div class="tx-right">
+                  <span class="amt">$45.00</span>
+                  <span class="cat">Software</span>
+                </div>
+              </div>
+              <div class="tx">
+                <div class="tx-avatar">V4</div>
+                <div class="tx-meta">
+                  <strong>Vendor Four</strong>
+                  <span>Card ending 5391</span>
+                </div>
+                <div class="tx-right">
+                  <span class="amt">$96.00</span>
+                  <span class="cat">Office</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-foot">
+            <span>4 transactions today</span>
+            <strong>$467.16</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature: Bulk -->
+      <div class="feature reveal">
+        <div>
+          <h3>Issue one card, or ten thousand.</h3>
+          <p>Drop an Excel file and we issue the cards in one pass. Use the API to build it into your own product. Multi entity, multi wallet, multi user. Run cards across every company you own from one login.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Bulk issue via Excel or REST API</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Multi entity wallets with role based access</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Sandbox environment for developers</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Reloadable, single use, or auto expiring cards</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="panel-stripe"></div>
+          <div class="panel-head">
+            <div class="panel-title">Bulk Issue</div>
+            <div class="panel-pill">241 cards</div>
+          </div>
+          <div class="panel-body">
+            <div class="bulk-file">
+              <div class="bulk-file-ico">XLS</div>
+              <div class="bulk-file-meta">
+                <strong>payroll_january.xlsx</strong>
+                <span>241 rows uploaded</span>
+              </div>
+            </div>
+            <div class="bulk-progress">
+              <div class="bulk-progress-bar"><div class="bulk-progress-fill"></div></div>
+              <div class="bulk-progress-text">
+                <span>Processing</span>
+                <strong>238 / 241</strong>
+              </div>
+            </div>
+            <div class="bulk-row header">
+              <div>Name</div><div>Limit</div><div>Status</div>
+            </div>
+            <div class="bulk-row">
+              <strong>James Patel</strong><div>$2,400</div><div><span class="check">✓ Issued</span></div>
+            </div>
+            <div class="bulk-row">
+              <strong>Maria Santos</strong><div>$3,100</div><div><span class="check">✓ Issued</span></div>
+            </div>
+            <div class="bulk-row">
+              <strong>Wei Zhang</strong><div>$2,800</div><div><span class="check">✓ Issued</span></div>
+            </div>
+          </div>
+          <div class="panel-foot">
+            <span>238 issued, 3 pending</span>
+            <strong>Finish</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CARD TYPES -->
+<section class="ctypes-section" id="cards">
+  <div class="wrap">
+    <div style="max-width: 720px;" class="reveal">
+      <div class="section-eyebrow">Card types</div>
+      <h2>One platform. Every kind of card.</h2>
+      <p class="section-lead">Virtual or physical, single use or reloadable, employee or vendor. Issue the right card for the job.</p>
+    </div>
+    <div class="ctypes">
+      <div class="ct reveal">
+        <div class="ct-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+        <h4>Visa Virtual Card</h4>
+        <p>Instant 16 digit Visa card for online purchases and subscriptions. Use anywhere Visa is accepted.</p>
+      </div>
+      <div class="ct reveal">
+        <div class="ct-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 3h18v18H3z"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div>
+        <h4>Expense Card</h4>
+        <p>Reloadable team card with per project spend limits. Freeze or unfreeze in one tap.</p>
+      </div>
+      <div class="ct reveal">
+        <div class="ct-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+        <h4>Vendor Card</h4>
+        <p>One card per vendor. Locked to that merchant only. Stops surprise renewals cold.</p>
+      </div>
+      <div class="ct reveal">
+        <div class="ct-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h4>Employee Card</h4>
+        <p>Personalized with cardholder name. Role based limits and manager approval workflows.</p>
+      </div>
+      <div class="ct reveal">
+        <div class="ct-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h4>Payroll Card</h4>
+        <p>Bulk issue for contractors and employees. Fund payroll in one upload, no bank required.</p>
+      </div>
+      <div class="ct reveal">
+        <div class="ct-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+        <h4>Gift Card</h4>
+        <p>Virtual or physical, in bulk. Holiday rewards, customer rebates, or vendor incentives.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how-section" id="how">
+  <div class="wrap">
+    <div class="how-grid">
+      <div class="how-stick reveal">
+        <div class="section-eyebrow">How it works</div>
+        <h2>From signup to first swipe.</h2>
+        <p class="section-lead">Five clean steps. No phone calls. No paperwork. No bank account required.</p>
+      </div>
+      <ul class="how-list">
+        <li class="reveal">
+          <div class="how-dot"></div>
+          <div class="how-text">
+            <h4>Fund your wallet</h4>
+            <p>Connect a bank or fund the wallet via ACH, wire, or check. Wallet custody holds the balance until you spend it.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <div class="how-dot"></div>
+          <div class="how-text">
+            <h4>Choose a card type</h4>
+            <p>Virtual, employee, vendor, gift, or payroll. Single use, reloadable, or auto expiring.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <div class="how-dot"></div>
+          <div class="how-text">
+            <h4>Set the rules</h4>
+            <p>Amount, merchant, location, time. Mix any combination per card. We check every swipe against them.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <div class="how-dot"></div>
+          <div class="how-text">
+            <h4>Push it out</h4>
+            <p>Send card details by secure email, or push the card straight into Apple Wallet or Google Wallet.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <div class="how-dot"></div>
+          <div class="how-text">
+            <h4>Monitor in real time</h4>
+            <p>Live transaction feed. Approve, freeze, top up, or revoke any card from any device.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="uc-section" id="use-cases">
+  <div class="wrap">
+    <div style="max-width: 720px;" class="reveal">
+      <div class="section-eyebrow">Use cases</div>
+      <h2>What teams do with virtual cards.</h2>
+      <p class="section-lead">From paying contractors to managing subscriptions, here is what people use Virtual Card Maker for.</p>
+    </div>
+    <div class="uc-grid">
+      <div class="uc reveal">
+        <h4>Pay contractors</h4>
+        <p>Issue a virtual Visa, lock it to the project budget, revoke it when the job is done. No bank account needed.</p>
+      </div>
+      <div class="uc reveal">
+        <h4>Manage subscriptions</h4>
+        <p>One card per SaaS vendor, locked to that merchant only. Stop surprise renewals and trial to paid traps.</p>
+      </div>
+      <div class="uc reveal">
+        <h4>Business travel</h4>
+        <p>Per diem cards with daily limits, geographic restrictions, and time windows that match the trip dates.</p>
+      </div>
+      <div class="uc reveal">
+        <h4>Holiday gifts</h4>
+        <p>Bulk virtual or physical gift cards for team rewards, customer rebates, or vendor incentives. Sent in one batch.</p>
+      </div>
+      <div class="uc reveal">
+        <h4>Department spend</h4>
+        <p>Every team gets a card with its own project level limit and category controls. No more shared cards.</p>
+      </div>
+      <div class="uc reveal">
+        <h4>Payroll</h4>
+        <p>Bulk issue payroll cards via Excel upload. Funds land on cards the same day, no bank account required.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final" id="cta">
+  <div class="wrap">
+    <div class="reveal">
+      <h2>Issue your first <span class="hl-line">Visa card</span><br/>in the next 60 seconds.</h2>
+      <p>Sign up takes 3 minutes. Verify your business. Fund the wallet. Issue the card. That's today, not next week.</p>
+      <div class="final-ctas">
+        <a href="https://live.virtualcardmaker.com/auth/signup" class="btn btn-gold btn-lg">
+          Create your first card
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="https://live.virtualcardmaker.com/auth/signin" class="btn btn-lg">Sign in</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="wrap-narrow">
+    <div style="text-align:center; max-width: 720px; margin: 0 auto;" class="reveal">
+      <div class="section-eyebrow" style="justify-content: center;">Questions</div>
+      <h2>Things people usually ask.</h2>
+    </div>
+    <div class="faq">
+      <details class="faq-item"><summary class="faq-q">How much does it cost to issue a card?<span class="faq-icon">+</span></summary><div class="faq-a">No credit check. No setup fees. No monthly minimums. You only need to fund the wallet with the amount you want the cards to spend, and we issue cards on demand from that balance.</div></details>
+      <details class="faq-item"><summary class="faq-q">How fast can I issue my first card?<span class="faq-icon">+</span></summary><div class="faq-a">Once your account is verified and your wallet is funded, you can create and send a card in under 60 seconds. Bulk uploads of thousands of cards run in a single pass.</div></details>
+      <details class="faq-item"><summary class="faq-q">Do you offer physical cards too?<span class="faq-icon">+</span></summary><div class="faq-a">Yes. Order a physical Visa card with the cardholder's printed name. Cards ship in 5 to 7 business days and inherit the same spend rules as your virtual cards.</div></details>
+      <details class="faq-item"><summary class="faq-q">What spend controls can I set?<span class="faq-icon">+</span></summary><div class="faq-a">Per transaction, daily, monthly, and yearly amount limits. Restrict by merchant, merchant category, country, city, day of the week, or time of day. Mix any combination per card.</div></details>
+      <details class="faq-item"><summary class="faq-q">Can I add cards to Apple Wallet or Google Wallet?<span class="faq-icon">+</span></summary><div class="faq-a">Yes. Every virtual card can be pushed directly into Apple Wallet or Google Wallet for contactless tap to pay in stores, alongside online use anywhere Visa is accepted.</div></details>
+      <details class="faq-item"><summary class="faq-q">Is there an API for developers?<span class="faq-icon">+</span></summary><div class="faq-a">Yes. Our OpenAPI lets you create cards, set restrictions, fetch transactions, and manage wallets programmatically. A sandbox environment is available for testing before you go live.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-card-display">
+          <div class="visa-card small">
+            <div class="vc-row1">
+              <div class="vc-brand">Zil Money</div>
+              <div class="vc-chip"></div>
+            </div>
+            <div class="vc-name">Virtual Card</div>
+            <div class="vc-num">4485 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 8204</div>
+            <div class="vc-row3">
+              <div>
+                <div class="vc-label">Issued by</div>
+                <div class="vc-value">Zil Money</div>
+              </div>
+              <div class="vc-logo">VISA</div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-product">
+          Virtual Card Maker
+          <small>Issue virtual Visa cards for every kind of business spend.</small>
+        </div>
+      </div>
+      <div>
+        <h5>Product</h5>
+        <a href="#features">Features</a>
+        <a href="#cards">Card Types</a>
+        <a href="#use-cases">Use cases</a>
+        <a href="#how">How it works</a>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div>
+        <h5>Legal</h5>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
+        <a href="disclaimer.html">Disclaimer</a>
+      </div>
+    </div>
+    <div class="footer-disclaimer">
+      <strong>Disclaimer.</strong> Virtual Card Maker is a service of Zil Money, a fintech platform, not a bank. Card issuance and banking-style services are provided through Zil Money and its licensed banking partners. Funds are held in a custody account until spent on a card transaction. By using virtualcardmaker.com you agree to our Terms &amp; Conditions and Privacy Policy. Virtual Card Maker, the Virtual Card Maker logo, and related marks are trademarks of Zil Money. All other trademarks are the property of their respective owners. Card issuance, processing, and settlement are subject to applicable U.S. financial regulations.
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 Virtual Card Maker. Powered by Zil Money.</div>
+      <div><a href="privacy-policy.html">Privacy</a> &middot; <a href="terms-and-conditions.html">Terms</a> &middot; <a href="disclaimer.html">Disclaimer</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // REVEAL ON SCROLL
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+  // HERO CARD: mouse parallax tilt
+  const heroCard = document.getElementById('heroCard');
+  const heroSection = heroCard?.closest('.hero');
+  if (heroCard && heroSection && window.matchMedia('(min-width: 861px)').matches) {
+    const card = heroCard.querySelector('.visa-card');
+    heroSection.addEventListener('mousemove', (e) => {
+      const rect = heroSection.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      card.style.transform = `perspective(1200px) rotateY(${x * 5}deg) rotateX(${-y * 3.5}deg) translateY(${y * -4}px)`;
+    });
+    heroSection.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1200px) rotateY(0) rotateX(0)';
+    });
+  }
+
+  // CARD CREATE + SEND SEQUENCE (with permission toggles)
+  const cardholders = [
+    { name: 'Sarah Chen',   digits: '8204', limit: '$5,000 / month', role: 'Marketing Team',
+      perms: ['US only', 'SaaS only', 'Weekdays'] },
+    { name: 'James Patel',  digits: '5391', limit: '$2,400 / cycle', role: 'Payroll',
+      perms: ['US only', 'Any merchant', 'Any time'] },
+    { name: 'Maria Santos', digits: '9472', limit: '$3,100 / month', role: 'Sales Team',
+      perms: ['Global', 'Travel only', 'Weekdays'] },
+    { name: 'Wei Zhang',    digits: '1058', limit: '$1,200 / vendor', role: 'Vendor: AWS',
+      perms: ['US only', 'AWS only', 'Any time'] }
+  ];
+  let cardIdx = 0;
+
+  const form = document.getElementById('createForm');
+  const formName = document.getElementById('formName');
+  const formLimit = document.getElementById('formLimit');
+  const cursor1 = document.getElementById('cursor1');
+  const cursor2 = document.getElementById('cursor2');
+  const formBtn = document.getElementById('formBtn');
+  const perm1 = document.getElementById('perm1');
+  const perm2 = document.getElementById('perm2');
+  const perm3 = document.getElementById('perm3');
+  const permText1 = document.getElementById('permText1');
+  const permText2 = document.getElementById('permText2');
+  const permText3 = document.getElementById('permText3');
+
+  const nameEl = document.getElementById('vcName');
+  const digitsEl = document.getElementById('vcDigits');
+  const limitEl = document.getElementById('vcLimit');
+  const roleEl = document.getElementById('vcRole');
+  const visaEl = document.getElementById('visaCard');
+
+  const toast = document.getElementById('cardToast');
+  const toastName = document.getElementById('toastName');
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function typeText(el, text, charDelay = 50) {
+    el.textContent = '';
+    for (let i = 0; i < text.length; i++) {
+      el.textContent += text[i];
+      await sleep(charDelay);
+    }
+  }
+
+  async function runSequence() {
+    // hold initial state briefly before first cycle
+    await sleep(900);
+
+    while (true) {
+      const data = cardholders[cardIdx];
+
+      // 1. Reset + show form
+      [perm1, perm2, perm3].forEach(p => p.classList.remove('on'));
+      permText1.textContent = data.perms[0];
+      permText2.textContent = data.perms[1];
+      permText3.textContent = data.perms[2];
+      form.classList.add('show');
+      formName.textContent = '';
+      formLimit.textContent = '';
+      cursor1.style.display = 'inline-block';
+      cursor2.style.display = 'none';
+      await sleep(420);
+
+      // 2. Type cardholder name
+      await typeText(formName, data.name, 55);
+      cursor1.style.display = 'none';
+      cursor2.style.display = 'inline-block';
+      await sleep(220);
+
+      // 3. Type spend limit
+      await typeText(formLimit, data.limit, 45);
+      cursor2.style.display = 'none';
+      await sleep(220);
+
+      // 4. Toggle permissions one by one
+      perm1.classList.add('on');
+      await sleep(220);
+      perm2.classList.add('on');
+      await sleep(220);
+      perm3.classList.add('on');
+      await sleep(380);
+
+      // 5. Click create button
+      formBtn.classList.add('clicked');
+      await sleep(280);
+      formBtn.classList.remove('clicked');
+      await sleep(140);
+
+      // 6. Hide form
+      form.classList.remove('show');
+      await sleep(220);
+
+      // 7. Update card (fade swap + pulse)
+      const fades = [nameEl, digitsEl, limitEl];
+      fades.forEach((el) => el.classList.add('fading'));
+      await sleep(280);
+      nameEl.textContent = data.name;
+      digitsEl.textContent = data.digits;
+      limitEl.textContent = data.limit;
+      roleEl.textContent = data.role;
+      fades.forEach((el) => el.classList.remove('fading'));
+      visaEl.classList.add('pulse');
+      await sleep(800);
+      visaEl.classList.remove('pulse');
+
+      // 8. Show "sent" toast
+      toastName.textContent = 'to ' + data.name;
+      toast.classList.add('show');
+      await sleep(2300);
+      toast.classList.remove('show');
+
+      // 9. Brief hold, then next
+      await sleep(500);
+      cardIdx = (cardIdx + 1) % cardholders.length;
+    }
+  }
+
+  if (form && nameEl && toast) {
+    runSequence();
+  }
+
+  // H1 ROTATING WORD
+  const rotatorWords = document.querySelectorAll('.rotator-word');
+  if (rotatorWords.length > 1) {
+    let rIdx = 0;
+    setInterval(() => {
+      const current = rotatorWords[rIdx];
+      const nextIdx = (rIdx + 1) % rotatorWords.length;
+      const next = rotatorWords[nextIdx];
+      current.classList.remove('in');
+      current.classList.add('out');
+      setTimeout(() => {
+        next.classList.add('in');
+      }, 80);
+      setTimeout(() => {
+        current.classList.remove('out');
+        rIdx = nextIdx;
+      }, 620);
+    }, 2400);
+  }
+</script>
+
+</body>
+</html>
